@@ -4,6 +4,7 @@ import { useEffect, useId, useState } from "react";
 import SlackSvg from "@/app/(dashboard)/mailboxes/[mailbox_slug]/icons/slack.svg";
 import { ConfirmationDialog } from "@/components/confirmationDialog";
 import { toast } from "@/components/hooks/use-toast";
+import { showErrorToast } from "@/lib/utils/toast";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -40,10 +41,7 @@ export const SlackChannels = ({
         );
       } catch (e) {
         Sentry.captureException(e);
-        toast({
-          title: "Error fetching available channels",
-          variant: "destructive",
-        });
+        showErrorToast("fetching available channels", e as Error);
       }
     };
 
@@ -141,10 +139,7 @@ const SlackSetting = ({ mailbox }: { mailbox: RouterOutputs["mailbox"]["get"] })
         variant: "success",
       });
     } catch (e) {
-      toast({
-        title: "Error disconnecting Slack",
-        variant: "destructive",
-      });
+      showErrorToast("disconnecting Slack", e as Error);
     }
   };
 

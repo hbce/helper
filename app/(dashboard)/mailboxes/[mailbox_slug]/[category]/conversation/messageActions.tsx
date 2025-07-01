@@ -9,6 +9,7 @@ import { useFileUpload } from "@/components/fileUploadContext";
 import { GenerateKnowledgeBankDialog } from "@/components/generateKnowledgeBankDialog";
 import { useExpiringLocalStorage } from "@/components/hooks/use-expiring-local-storage";
 import { toast } from "@/components/hooks/use-toast";
+import { showErrorToast } from "@/lib/utils/toast";
 import { useSpeechRecognition } from "@/components/hooks/useSpeechRecognition";
 import { KeyboardShortcut } from "@/components/keyboardShortcut";
 import LabeledInput from "@/components/labeledInput";
@@ -332,10 +333,7 @@ export const MessageActions = () => {
                   });
                 } catch (e) {
                   captureExceptionAndLog(e);
-                  toast({
-                    variant: "destructive",
-                    title: "Failed to unsend email",
-                  });
+                  showErrorToast("unsend email", e as Error);
                 } finally {
                   utils.mailbox.conversations.get.invalidate({ mailboxSlug, conversationSlug });
                   navigateToConversation(conversation.slug);
@@ -349,10 +347,7 @@ export const MessageActions = () => {
       });
     } catch (error) {
       captureExceptionAndLog(error);
-      toast({
-        variant: "destructive",
-        title: "Error submitting message",
-      });
+      showErrorToast("submitting message", error as Error);
     } finally {
       setSending(false);
     }

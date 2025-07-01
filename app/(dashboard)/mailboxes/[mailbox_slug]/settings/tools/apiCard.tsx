@@ -3,7 +3,7 @@
 import { Check, RefreshCw, Trash } from "lucide-react";
 import { useState } from "react";
 import { ConfirmationDialog } from "@/components/confirmationDialog";
-import { toast } from "@/components/hooks/use-toast";
+import { showErrorToast } from "@/lib/utils/toast";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
@@ -34,11 +34,7 @@ const ApiCard = ({
       setSchema("");
     },
     onError: (error) => {
-      toast({
-        title: "Error refreshing API",
-        description: error.message,
-        variant: "destructive",
-      });
+      showErrorToast("refreshing API", error);
     },
   });
 
@@ -47,11 +43,7 @@ const ApiCard = ({
       utils.mailbox.tools.list.invalidate();
     },
     onError: (error) => {
-      toast({
-        title: "Error deleting API",
-        description: error.message,
-        variant: "destructive",
-      });
+      showErrorToast("deleting API", error);
     },
   });
 

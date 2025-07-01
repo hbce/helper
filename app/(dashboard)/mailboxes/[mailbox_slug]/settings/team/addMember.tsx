@@ -3,6 +3,7 @@
 import { PlusCircle, X } from "lucide-react";
 import { useState } from "react";
 import { toast } from "@/components/hooks/use-toast";
+import { showErrorToast } from "@/lib/utils/toast";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -33,11 +34,7 @@ export function AddMember({ mailboxSlug, teamMembers }: TeamInviteProps) {
       utils.mailbox.members.list.invalidate({ mailboxSlug });
     },
     onError: (error) => {
-      toast({
-        title: "Failed to send invitation",
-        description: error.message,
-        variant: "destructive",
-      });
+      showErrorToast("sending invitation", error);
     },
   });
 

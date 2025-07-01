@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { toast } from "@/components/hooks/use-toast";
+import { showErrorToast } from "@/lib/utils/toast";
 import { useSavingIndicator } from "@/components/hooks/useSavingIndicator";
 import { SavingIndicator } from "@/components/savingIndicator";
 import { Avatar } from "@/components/ui/avatar";
@@ -70,11 +71,7 @@ const TeamMemberRow = ({ member, mailboxSlug }: TeamMemberRowProps) => {
     },
     onError: (error) => {
       displayNameSaving.setState("error");
-      toast({
-        title: "Failed to update display name",
-        description: error.message,
-        variant: "destructive",
-      });
+      showErrorToast("update display name", error);
       setDisplayNameInput(member.displayName || "");
     },
   });
@@ -98,11 +95,7 @@ const TeamMemberRow = ({ member, mailboxSlug }: TeamMemberRowProps) => {
     },
     onError: (error) => {
       roleSaving.setState("error");
-      toast({
-        title: "Failed to update role",
-        description: error.message,
-        variant: "destructive",
-      });
+      showErrorToast("update role", error);
       setRole(member.role);
       setKeywordsInput(member.keywords.join(", "));
       setLocalKeywords(member.keywords);
@@ -127,11 +120,7 @@ const TeamMemberRow = ({ member, mailboxSlug }: TeamMemberRowProps) => {
     },
     onError: (error) => {
       keywordsSaving.setState("error");
-      toast({
-        title: "Failed to update keywords",
-        description: error.message,
-        variant: "destructive",
-      });
+      showErrorToast("update keywords", error);
       setKeywordsInput(member.keywords.join(", "));
       setLocalKeywords(member.keywords);
     },

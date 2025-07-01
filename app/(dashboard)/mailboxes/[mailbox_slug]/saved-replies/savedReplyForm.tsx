@@ -4,6 +4,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { toast } from "@/components/hooks/use-toast";
+import { showErrorToast } from "@/lib/utils/toast";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -55,11 +56,7 @@ export function SavedReplyForm({ savedReply, mailboxSlug, onSuccess, onCancel, o
       form.reset();
     },
     onError: (error) => {
-      toast({
-        title: "Failed to create saved reply",
-        description: error.message,
-        variant: "destructive",
-      });
+      showErrorToast("create saved reply", error);
     },
   });
 
@@ -68,11 +65,7 @@ export function SavedReplyForm({ savedReply, mailboxSlug, onSuccess, onCancel, o
       onSuccess();
     },
     onError: (error) => {
-      toast({
-        title: "Failed to update saved reply",
-        description: error.message,
-        variant: "destructive",
-      });
+      showErrorToast("update saved reply", error);
     },
   });
 
@@ -82,7 +75,7 @@ export function SavedReplyForm({ savedReply, mailboxSlug, onSuccess, onCancel, o
       onDelete?.();
     },
     onError: (error) => {
-      toast({ title: "Failed to delete saved reply", description: error.message, variant: "destructive" });
+      showErrorToast("delete saved reply", error);
     },
   });
 

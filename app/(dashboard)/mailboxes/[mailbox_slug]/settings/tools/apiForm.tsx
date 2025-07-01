@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { toast } from "@/components/hooks/use-toast";
+import { showErrorToast } from "@/lib/utils/toast";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -32,11 +33,7 @@ const ApiForm = ({ onCancel, mailboxSlug }: ApiFormProps) => {
       onCancel();
     },
     onError: (error) => {
-      toast({
-        title: "Failed to import API",
-        description: error.message,
-        variant: "destructive",
-      });
+      showErrorToast("import API", error);
     },
   });
 
