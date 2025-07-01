@@ -131,7 +131,7 @@ const ScrollToTopButton = ({
       <TooltipTrigger asChild>
         <a
           className={cn(
-            "absolute bottom-4 left-4 transition-all duration-200 h-8 w-8 p-0 rounded-full",
+            "sticky bottom-4 left-4 z-10 transition-all duration-200 h-8 w-8 p-0 rounded-full",
             "flex items-center justify-center",
             "bg-background border border-border shadow-xs",
             "hover:border-primary hover:shadow-md hover:bg-muted",
@@ -164,7 +164,6 @@ const MessageThreadPanel = ({
   return (
     <div className="grow overflow-y-auto relative" ref={scrollRef}>
       <div ref={contentRef as React.RefObject<HTMLDivElement>} className="relative">
-        <ScrollToTopButton scrollRef={scrollRef} />
         <div className="flex flex-col gap-8 px-4 py-4 h-full">
           {conversationInfo && (
             <MessageThread
@@ -178,6 +177,7 @@ const MessageThreadPanel = ({
           )}
         </div>
       </div>
+      <ScrollToTopButton scrollRef={scrollRef} />
     </div>
   );
 };
@@ -185,7 +185,7 @@ const MessageThreadPanel = ({
 const MessageActionsPanel = () => {
   return (
     <div
-      className="h-full bg-muted px-4 pb-4"
+      className="h-full overflow-y-auto bg-muted px-4 pb-4"
       onKeyDown={(e) => {
         // Prevent keypress events from triggering the global inbox view keyboard shortcuts
         e.stopPropagation();
@@ -460,9 +460,19 @@ const ConversationContent = () => {
             <ResizablePanel
               minSize={20}
               defaultSize={defaultSize}
-              maxSize={80}
+              maxSize={62.5}
               onResize={(size) => {
                 localStorage.setItem("conversationHeightRange", Math.floor(size).toString());
+
+                const scrollElement = scrollRef.current;
+                if (scrollElement) {
+                  const threshold = 50;
+                  const isAtBottom =
+                    scrollElement.scrollHeight - scrollElement.scrollTop - scrollElement.clientHeight <= threshold;
+                  if (isAtBottom) {
+                    scrollToBottom({ animation: "instant" });
+                  }
+                }
               }}
             >
               <div className="flex flex-col h-full">
@@ -492,7 +502,7 @@ const ConversationContent = () => {
               </div>
             </ResizablePanel>
             <ResizableHandle />
-            <ResizablePanel defaultSize={100 - defaultSize} minSize={20}>
+            <ResizablePanel defaultSize={100 - defaultSize} minSize={37.5} maxSize={80}>
               <MessageActionsPanel />
             </ResizablePanel>
           </ResizablePanelGroup>
