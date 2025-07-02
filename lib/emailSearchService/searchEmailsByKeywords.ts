@@ -13,6 +13,7 @@ export async function searchEmailsByKeywords(
   orderBy: SQL[] = [desc(conversationMessages.id)],
 ) {
   const searchIndex = extractHashedWordsFromEmail({ body: keywords }).join(" ");
+
   const searchResult = await db
     .select({
       id: conversationMessages.id,
@@ -24,7 +25,12 @@ export async function searchEmailsByKeywords(
     .where(
       and(
         eq(conversations.mailboxId, mailboxId),
-        sql`string_to_array(search_index, ' ') @> string_to_array(${searchIndex}, ' ')`,
+        // Use exact word match OR prefix search on raw words in search_index
+        sql`(
+          string_to_array(search_index, ' ') @> string_to_array(${searchIndex}, ' ')
+          OR search_index ILIKE ${`% ${keywords.toLowerCase()}%`}
+          OR search_index ILIKE ${`${keywords.toLowerCase()}%`}
+        )`,
         ...filters,
       ),
     )

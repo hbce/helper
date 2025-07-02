@@ -6,6 +6,29 @@ import { getConversationById } from "@/lib/data/conversation";
 import { ensureCleanedUpText, getConversationMessageById } from "@/lib/data/conversationMessage";
 import { extractHashedWordsFromEmail } from "@/lib/emailSearchService/extractHashedWordsFromEmail";
 
+function extractRawWords(params: {
+  emailFrom?: string | null;
+  subject?: string | null;
+  body?: string | null;
+}): string[] {
+  const extractedWords: string[] = [];
+
+  if (params.emailFrom) extractedWords.push(params.emailFrom);
+  if (params.subject) extractedWords.push(...extractWords(params.subject));
+  if (params.body) extractedWords.push(...extractWords(params.body));
+
+  // Create a unique set of raw words
+  return Array.from(new Set(extractedWords));
+}
+
+function extractWords(text: string): string[] {
+  return text
+    .toLowerCase()
+    .split(/\s+/)
+    .map((word) => word.replace(/^[^a-z0-9]+|[^a-z0-9]+$/g, ""))
+    .filter(Boolean);
+}
+
 const MAX_LENGTH = 5000;
 
 export const indexConversationMessage = async ({ messageId }: { messageId: number }) => {
@@ -28,11 +51,21 @@ export const indexConversationMessage = async ({ messageId }: { messageId: numbe
     body: messageBody,
   });
 
+  // Also extract raw words for prefix matching
+  const rawWords = extractRawWords({
+    emailFrom: conversation.emailFrom,
+    subject: conversation.subject,
+    body: messageBody,
+  });
+
+  // Combine hashed words and raw words
+  const allWords = [...uniqueHashedWords, ...rawWords];
+
   // Generate the search index
   let totalLength = 0;
   const searchIndexWords = [];
 
-  for (const word of uniqueHashedWords) {
+  for (const word of allWords) {
     // +1 accounts for the space between words
     if (totalLength + word.length + 1 > MAX_LENGTH) {
       break;
