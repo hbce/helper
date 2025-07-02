@@ -1,5 +1,5 @@
 import { capitalize } from "lodash-es";
-import { ArrowDownUp, Filter, Search } from "lucide-react";
+import { ArrowDownUp, Filter, Search, SortAsc, SortDesc } from "lucide-react";
 import { useQueryState } from "nuqs";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useHotkeys } from "react-hotkeys-hook";
@@ -100,30 +100,38 @@ export const ConversationSearchBar = ({
     return statuses;
   }, [status, searchParams]);
 
-  const sortOptions = useMemo(
-    () => [
-      ...(defaultSort === "highest_value"
+  const sortOptions = useMemo(() => {
+    const options = [
+      ...(defaultSort === "highest_value" && !searchParams.search
         ? [
             {
               value: `highest_value` as const,
               label: `Highest Value`,
-              selected: searchParams.sort ? searchParams.sort == "highest_value" : true,
             },
           ]
         : []),
       {
         value: `oldest` as const,
         label: `Oldest`,
-        selected: searchParams.sort ? searchParams.sort === "oldest" : defaultSort === "oldest",
       },
       {
         value: `newest` as const,
         label: `Newest`,
-        selected: searchParams.sort == "newest",
       },
-    ],
-    [defaultSort, searchParams],
-  );
+    ];
+
+    return options.map((option) => ({
+      ...option,
+      selected: (searchParams.sort || defaultSort) === option.value,
+    }));
+  }, [defaultSort, searchParams]);
+
+  useEffect(() => {
+    const selectedSort = sortOptions.find((o) => o.selected);
+    if (!selectedSort) {
+      handleSortChange(sortOptions[0]!.value as SortOption);
+    }
+  }, [sortOptions, handleSortChange]);
 
   return (
     <div className="flex items-center justify-between gap-2 md:gap-6 py-1">
@@ -189,21 +197,12 @@ export const ConversationSearchBar = ({
         </Button>
       </div>
       <Select value={sortOptions.find(({ selected }) => selected)?.value || ""} onValueChange={handleSortChange}>
-        <SelectTrigger
-          variant="bare"
-          className="w-auto text-foreground [&>svg]:text-foreground text-sm"
-          hideArrow="mobileOnly"
-        >
-          <SelectValue
-            placeholder={
-              <>
-                <ArrowDownUp className="h-4 w-4 md:hidden" />
-                <span className="hidden md:block">Sort by</span>
-              </>
-            }
-          >
-            <ArrowDownUp className="h-4 w-4 md:hidden" />
-            <span className="hidden md:block">{sortOptions.find(({ selected }) => selected)?.label}</span>
+        <SelectTrigger className="w-auto text-foreground [&>svg]:text-foreground text-sm" hideArrow>
+          <SelectValue>
+            <div className="flex items-center gap-2">
+              <ArrowDownUp className="h-4 w-4" />
+              {sortOptions.find(({ selected }) => selected)?.label}
+            </div>
           </SelectValue>
         </SelectTrigger>
         <SelectContent>

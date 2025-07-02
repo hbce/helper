@@ -62,7 +62,9 @@ export const ConversationListItem = ({
           "flex w-full cursor-pointer flex-col  transition-colors border-b border-border py-3 md:py-4",
           isActive
             ? "bg-amber-50 dark:bg-white/5 border-l-4 border-l-amber-400"
-            : "hover:bg-gray-50 dark:hover:bg-white/[0.02]",
+            : isSelected
+              ? "bg-secondary dark:bg-secondary/50 hover:bg-secondary/80 dark:hover:bg-secondary/40"
+              : "hover:bg-gray-50 dark:hover:bg-white/[0.02]",
         )}
       >
         <div className="flex items-start gap-4 px-2 md:px-4">
