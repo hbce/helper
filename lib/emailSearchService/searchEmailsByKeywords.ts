@@ -14,7 +14,6 @@ export async function searchEmailsByKeywords(
 ) {
   const searchIndex = extractHashedWordsFromEmail({ body: keywords }).join(" ");
 
-  // Use prefix matching for partial word search
   const searchResult = await db
     .select({
       id: conversationMessages.id,
@@ -26,15 +25,11 @@ export async function searchEmailsByKeywords(
     .where(
       and(
         eq(conversations.mailboxId, mailboxId),
-        // Use both exact match and prefix matching for partial words
+        // Use exact word match OR prefix search on raw words in search_index
         sql`(
           string_to_array(search_index, ' ') @> string_to_array(${searchIndex}, ' ')
-          OR EXISTS (
-            SELECT 1 FROM unnest(string_to_array(search_index, ' ')) AS word
-            WHERE word LIKE ANY(
-              SELECT unnest(string_to_array(${searchIndex}, ' ')) || '%'
-            )
-          )
+          OR search_index ILIKE ${`% ${keywords.toLowerCase()}%`}
+          OR search_index ILIKE ${`${keywords.toLowerCase()}%`}
         )`,
         ...filters,
       ),
