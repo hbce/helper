@@ -333,7 +333,7 @@ export const MessageActions = () => {
                   });
                 } catch (e) {
                   captureExceptionAndLog(e);
-                  showErrorToast("unsend email", e as Error);
+                  showErrorToast("unsend email", e);
                 } finally {
                   utils.mailbox.conversations.get.invalidate({ mailboxSlug, conversationSlug });
                   navigateToConversation(conversation.slug);
@@ -347,7 +347,7 @@ export const MessageActions = () => {
       });
     } catch (error) {
       captureExceptionAndLog(error);
-      showErrorToast("submitting message", error as Error);
+      showErrorToast("submitting message", error);
     } finally {
       setSending(false);
     }
