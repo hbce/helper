@@ -424,9 +424,7 @@ const ConversationContent = () => {
         <ResizablePanel defaultSize={75} minSize={50} maxSize={85}>
           <ResizablePanelGroup direction="vertical" className="flex w-full flex-col bg-background">
             <ResizablePanel
-              minSize={20}
               defaultSize={defaultSize}
-              maxSize={62.5}
               onResize={(size) => {
                 localStorage.setItem("conversationHeightRange", Math.floor(size).toString());
 
@@ -470,7 +468,7 @@ const ConversationContent = () => {
               </div>
             </ResizablePanel>
             <ResizableHandle />
-            <ResizablePanel defaultSize={100 - defaultSize} minSize={37.5} maxSize={80}>
+            <ResizablePanel defaultSize={100 - defaultSize} minSize={25} maxSize={80}>
               <MessageActionsPanel />
             </ResizablePanel>
           </ResizablePanelGroup>
