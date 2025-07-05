@@ -232,7 +232,7 @@ export const List = () => {
                   </Tooltip>
                 </TooltipProvider>
                 <div className="flex items-center gap-2">
-                  {searchParams.status === "closed" ? (
+                  {(searchParams.status === "closed" || searchParams.status === "spam") && (
                     <ConfirmationDialog
                       message={`Are you sure you want to reopen ${selectedCount} conversation${
                         selectedCount === 1 ? "" : "s"
@@ -245,7 +245,8 @@ export const List = () => {
                         Reopen
                       </Button>
                     </ConfirmationDialog>
-                  ) : (
+                  )}
+                  {searchParams.status !== "closed" && searchParams.status !== "spam" && (
                     <ConfirmationDialog
                       message={`Are you sure you want to close ${selectedCount} conversation${
                         selectedCount === 1 ? "" : "s"
