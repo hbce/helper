@@ -122,7 +122,6 @@ export const MessageActions = () => {
     }
   }, [conversation]);
   useEffect(() => {
-    // Updates the drafted email upon draft refreshes
     if (conversation?.draft?.id) {
       const message = conversation?.draft.body ?? "";
       setDraftedEmail((email) => ({ ...email, message }));
@@ -249,7 +248,6 @@ export const MessageActions = () => {
         responseToId: lastUserMessage?.id ?? null,
       });
 
-      // Clear the draft immediately after message is sent successfully
       setDraftedEmail((prev) => ({ ...prev, message: "", files: [], modified: false }));
       setInitialMessageObject({ content: "" });
       resetFiles([]);
@@ -264,17 +262,15 @@ export const MessageActions = () => {
         captureExceptionAndLog(error);
       }
 
-      // Handle status update separately - if this fails, draft is already cleared
       let shouldTriggerConfetti = false;
       if (conversation.status === "open" && close) {
         try {
-          // Use direct update to avoid redundant toast since we're already showing "Replied and closed"
           await utils.client.mailbox.conversations.update.mutate({
             mailboxSlug,
             conversationSlug,
             status: "closed",
           });
-          // Remove conversation from list and move to next
+
           removeConversation();
           if (!assign) shouldTriggerConfetti = true;
         } catch (error) {
@@ -412,7 +408,6 @@ export const MessageActions = () => {
   const handleToggleCc = useCallback(() => {
     setShowCc((prev) => {
       if (prev) {
-        // Clear CC/BCC when hiding
         updateDraftedEmail({ cc: "", bcc: "" });
       }
       return !prev;
