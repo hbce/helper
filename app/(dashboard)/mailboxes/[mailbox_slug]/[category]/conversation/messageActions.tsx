@@ -151,7 +151,6 @@ export const MessageActions = () => {
     }
   }, [showCc]);
 
-  const onToggleCc = useCallback(() => setShowCc((prev) => !prev), []);
 
   const handleSegment = useCallback((segment: string) => {
     if (editorRef.current?.editor) {
@@ -410,6 +409,16 @@ export const MessageActions = () => {
     setStoredMessage(changes.message);
   };
 
+  const handleToggleCc = useCallback(() => {
+    setShowCc((prev) => {
+      if (prev) {
+        // Clear CC/BCC when hiding
+        updateDraftedEmail({ cc: "", bcc: "" });
+      }
+      return !prev;
+    });
+  }, []);
+
   const handleInsertReply = (content: string) => {
     setDraftedEmail((prev) => ({
       ...prev,
@@ -426,7 +435,7 @@ export const MessageActions = () => {
         open={showCommandBar}
         onOpenChange={setShowCommandBar}
         onInsertReply={handleInsertReply}
-        onToggleCc={onToggleCc}
+        onToggleCc={handleToggleCc}
         inputRef={commandInputRef}
       />
       <div className={cn("shrink-0 space-y-2 mt-4", showCommandBar && "hidden")}>
@@ -437,7 +446,7 @@ export const MessageActions = () => {
           <div className="flex-1 text-sm text-muted-foreground">
             {conversation?.customerMetadata?.name || "Customer"}
           </div>
-          <Button variant="ghost" size="sm" onClick={onToggleCc} className="h-6 w-6 p-0 hover:bg-muted">
+          <Button variant="ghost" size="sm" onClick={handleToggleCc} className="h-6 w-6 p-0 hover:bg-muted">
             <ChevronDown className={cn("h-4 w-4 transition-transform", showCc && "rotate-180")} />
           </Button>
         </div>

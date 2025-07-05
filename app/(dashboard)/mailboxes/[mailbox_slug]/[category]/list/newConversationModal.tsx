@@ -164,7 +164,13 @@ const NewConversationModal = ({ mailboxSlug, conversationSlug, onSubmit }: Props
           <Button
             variant="ghost"
             size="sm"
-            onClick={() => setShowCcBcc(!showCcBcc)}
+            onClick={() => {
+              setShowCcBcc(!showCcBcc);
+              if (showCcBcc) {
+                // Clear CC/BCC when hiding
+                setNewConversationInfo((info) => ({ ...info, cc: "", bcc: "" }));
+              }
+            }}
             className="h-8 w-8 p-0 hover:bg-muted self-end"
           >
             <ChevronDown className={cn("h-4 w-4 transition-transform", showCcBcc && "rotate-180")} />
