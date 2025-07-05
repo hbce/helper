@@ -5,6 +5,7 @@ import { DateRange } from "react-day-picker";
 import { Bar, BarChart, ReferenceLine, ResponsiveContainer, XAxis, YAxis } from "recharts";
 import ConversationsModal from "@/app/(dashboard)/mailboxes/[mailbox_slug]/[category]/conversationsModal";
 import { timeRangeToQuery } from "@/app/(dashboard)/mailboxes/[mailbox_slug]/dashboard/timeRangeSelector";
+import LoadingSpinner from "@/components/loadingSpinner";
 import {
   ChartContainer,
   ChartLegend,
@@ -48,15 +49,19 @@ export function ReactionsChart({
   const { data: selectedConversations, isLoading: isLoadingConversations } = api.mailbox.conversations.list.useQuery(
     {
       mailboxSlug,
-      createdAfter: selectedBar ? selectedBar.startTime.toISOString() : startDate.toISOString(),
-      createdBefore: selectedBar ? selectedBar.endTime.toISOString() : endDate.toISOString(),
+      reactionAfter: selectedBar ? selectedBar.startTime.toISOString() : startDate.toISOString(),
+      reactionBefore: selectedBar ? selectedBar.endTime.toISOString() : endDate.toISOString(),
       reactionType: selectedBar?.reactionType ?? "thumbs-up",
     },
     { enabled: !!selectedBar },
   );
 
   if (isLoading || !data) {
-    return <div className="w-full h-full flex items-center justify-center">Loading...</div>;
+    return (
+      <div className="w-full h-full flex items-center justify-center">
+        <LoadingSpinner />
+      </div>
+    );
   }
   if (!data.length) {
     return <div className="w-full h-full flex items-center justify-center">No data available.</div>;
