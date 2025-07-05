@@ -246,7 +246,7 @@ export const List = () => {
                       </Button>
                     </ConfirmationDialog>
                   )}
-                  {searchParams.status !== "closed" && searchParams.status !== "spam" && (
+                  {searchParams.status !== "closed" && (
                     <ConfirmationDialog
                       message={`Are you sure you want to close ${selectedCount} conversation${
                         selectedCount === 1 ? "" : "s"
